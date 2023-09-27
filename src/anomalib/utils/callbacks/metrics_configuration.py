@@ -42,8 +42,6 @@ class MetricsConfigurationCallback(Callback):
             pixel_metrics (list[str] | None | list[dict]): List of pixel-level metrics.
         """
         self.task = task
-        # print(image_metrics)  # todo remove
-        # print(pixel_metrics)  # todo remove
         self.image_metric_names = image_metrics
         self.pixel_metric_names = pixel_metrics
 
@@ -80,8 +78,5 @@ class MetricsConfigurationCallback(Callback):
         if isinstance(pl_module, AnomalyModule):
             pl_module.image_metrics = create_metric_collection(image_metric_names, "image_")
             pl_module.pixel_metrics = create_metric_collection(pixel_metric_names, "pixel_")
-            # print(pl_module.image_metrics)  # todo remove
-            # print(pl_module.pixel_metrics) # todo remove
-            # print(pl_module.image_threshold) # todo remove
             pl_module.image_metrics.set_threshold(pl_module.image_threshold.value)
             pl_module.pixel_metrics.set_threshold(pl_module.pixel_threshold.value)
