@@ -21,8 +21,20 @@ from .collection import AnomalibMetricCollection
 from .min_max import MinMax
 from .optimal_f1 import OptimalF1
 from .pro import PRO
+from .pr_at_rc import PrecisionAtFixedRecall, RecallAtPrecisionAtFixedRecall
 
-__all__ = ["AUROC", "AUPR", "AUPRO", "OptimalF1", "AnomalyScoreThreshold", "AnomalyScoreDistribution", "MinMax", "PRO"]
+__all__ = [
+    "AUROC",
+    "AUPR",
+    "AUPRO",
+    "OptimalF1",
+    "AnomalyScoreThreshold",
+    "AnomalyScoreDistribution",
+    "MinMax",
+    "PRO",
+    "PrecisionAtFixedRecall",
+    "RecallAtPrecisionAtFixedRecall",
+]
 
 
 def metric_collection_from_names(metric_names: list[str], prefix: str | None) -> AnomalibMetricCollection:
@@ -147,7 +159,7 @@ def metric_collection_from_dicts(metrics: dict[str, dict[str, Any]], prefix: str
 
 
 def create_metric_collection(
-        metrics: list[str] | dict[str, dict[str, Any]], prefix: str | None
+    metrics: list[str] | dict[str, dict[str, Any]], prefix: str | None
 ) -> AnomalibMetricCollection:
     """Create a metric collection from a list of metric names or dictionaries.
 

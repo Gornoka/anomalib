@@ -26,10 +26,9 @@ class AnomalyScoreThreshold(BinaryPrecisionRecallCurve):
 
     # binary is the old default, this keeps backwards compatibility with existing configs
 
-    def __init__(self, num_classes=1,default_value: float = 0.5, **kwargs) -> None:
-
+    def __init__(self, num_classes=1, default_value: float = 0.5, **kwargs) -> None:
         del num_classes
-        super().__init__( **kwargs)
+        super().__init__(**kwargs)
 
         self.add_state("value", default=torch.tensor(default_value), persistent=True)  # pylint: disable=not-callable
         self.value = torch.tensor(default_value)  # pylint: disable=not-callable

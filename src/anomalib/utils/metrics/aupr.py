@@ -22,7 +22,8 @@ class AUPR(BinaryPrecisionRecallCurve):
     # binary is the old default, this keeps backwards compatibility with existing configs
     def __init__(self, num_classes=1, **kwargs) -> None:
         del num_classes
-        super().__init__( **kwargs)
+        super().__init__(**kwargs)
+
     def compute(self) -> Tensor:
         """First compute PR curve, then compute area under the curve.
 

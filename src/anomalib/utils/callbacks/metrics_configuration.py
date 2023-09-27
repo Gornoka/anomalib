@@ -24,10 +24,10 @@ class MetricsConfigurationCallback(Callback):
     """Metrics Configuration Callback."""
 
     def __init__(
-            self,
-            task: TaskType = TaskType.SEGMENTATION,
-            image_metrics: list[str] | None | list[dict] = None,
-            pixel_metrics: list[str] | None | list[dict] = None,
+        self,
+        task: TaskType = TaskType.SEGMENTATION,
+        image_metrics: list[str] | None | list[dict] = None,
+        pixel_metrics: list[str] | None | list[dict] = None,
     ) -> None:
         """Create image and pixel-level AnomalibMetricsCollection.
 
@@ -46,10 +46,10 @@ class MetricsConfigurationCallback(Callback):
         self.pixel_metric_names = pixel_metrics
 
     def setup(
-            self,
-            trainer: pl.Trainer,
-            pl_module: AnomalyModule,
-            stage: str | None = None,
+        self,
+        trainer: pl.Trainer,
+        pl_module: AnomalyModule,
+        stage: str | None = None,
     ) -> None:
         """Setup image and pixel-level AnomalibMetricsCollection within Anomalib Model.
 
