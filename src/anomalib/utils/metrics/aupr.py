@@ -8,16 +8,21 @@ from __future__ import annotations
 
 from matplotlib.figure import Figure
 from torch import Tensor
-from torchmetrics import PrecisionRecallCurve
-from torchmetrics.functional import auc
+from torchmetrics import PrecisionRecallCurve, Metric
+from torchmetrics.classification import BinaryPrecisionRecallCurve
+from torchmetrics.utilities.compute import auc
 from torchmetrics.utilities.data import dim_zero_cat
 
 from .plotting_utils import plot_figure
 
 
-class AUPR(PrecisionRecallCurve):
+class AUPR(BinaryPrecisionRecallCurve):
     """Area under the PR curve."""
 
+    # binary is the old default, this keeps backwards compatibility with existing configs
+    def __init__(self, num_classes=1, **kwargs) -> None:
+        del num_classes
+        super().__init__( **kwargs)
     def compute(self) -> Tensor:
         """First compute PR curve, then compute area under the curve.
 

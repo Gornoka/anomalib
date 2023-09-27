@@ -24,10 +24,10 @@ class MetricsConfigurationCallback(Callback):
     """Metrics Configuration Callback."""
 
     def __init__(
-        self,
-        task: TaskType = TaskType.SEGMENTATION,
-        image_metrics: list[str] | None = None,
-        pixel_metrics: list[str] | None = None,
+            self,
+            task: TaskType = TaskType.SEGMENTATION,
+            image_metrics: list[str] | None | list[dict] = None,
+            pixel_metrics: list[str] | None | list[dict] = None,
     ) -> None:
         """Create image and pixel-level AnomalibMetricsCollection.
 
@@ -38,18 +38,20 @@ class MetricsConfigurationCallback(Callback):
 
         Args:
             task (TaskType): Task type of the current run.
-            image_metrics (list[str] | None): List of image-level metrics.
-            pixel_metrics (list[str] | None): List of pixel-level metrics.
+            image_metrics (list[str] | None | list[dict]): List of image-level metrics.
+            pixel_metrics (list[str] | None | list[dict]): List of pixel-level metrics.
         """
         self.task = task
+        # print(image_metrics)  # todo remove
+        # print(pixel_metrics)  # todo remove
         self.image_metric_names = image_metrics
         self.pixel_metric_names = pixel_metrics
 
     def setup(
-        self,
-        trainer: pl.Trainer,
-        pl_module: AnomalyModule,
-        stage: str | None = None,
+            self,
+            trainer: pl.Trainer,
+            pl_module: AnomalyModule,
+            stage: str | None = None,
     ) -> None:
         """Setup image and pixel-level AnomalibMetricsCollection within Anomalib Model.
 
@@ -78,6 +80,8 @@ class MetricsConfigurationCallback(Callback):
         if isinstance(pl_module, AnomalyModule):
             pl_module.image_metrics = create_metric_collection(image_metric_names, "image_")
             pl_module.pixel_metrics = create_metric_collection(pixel_metric_names, "pixel_")
-
+            # print(pl_module.image_metrics)  # todo remove
+            # print(pl_module.pixel_metrics) # todo remove
+            # print(pl_module.image_threshold) # todo remove
             pl_module.image_metrics.set_threshold(pl_module.image_threshold.value)
             pl_module.pixel_metrics.set_threshold(pl_module.pixel_threshold.value)

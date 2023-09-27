@@ -9,10 +9,10 @@ import warnings
 
 import torch
 from torch import Tensor
-from torchmetrics import PrecisionRecallCurve
+from torchmetrics.classification import BinaryPrecisionRecallCurve
 
 
-class AnomalyScoreThreshold(PrecisionRecallCurve):
+class AnomalyScoreThreshold(BinaryPrecisionRecallCurve):
     """Anomaly Score Threshold.
 
     This class computes/stores the threshold that determines the anomalous label
@@ -24,8 +24,12 @@ class AnomalyScoreThreshold(PrecisionRecallCurve):
     adaptive threshold value.
     """
 
-    def __init__(self, default_value: float = 0.5, **kwargs) -> None:
-        super().__init__(num_classes=1, **kwargs)
+    # binary is the old default, this keeps backwards compatibility with existing configs
+
+    def __init__(self, num_classes=1,default_value: float = 0.5, **kwargs) -> None:
+
+        del num_classes
+        super().__init__( **kwargs)
 
         self.add_state("value", default=torch.tensor(default_value), persistent=True)  # pylint: disable=not-callable
         self.value = torch.tensor(default_value)  # pylint: disable=not-callable

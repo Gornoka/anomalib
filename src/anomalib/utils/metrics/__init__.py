@@ -11,7 +11,7 @@ from typing import Any
 
 import torchmetrics
 from omegaconf import DictConfig, ListConfig
-
+import omegaconf
 from .anomaly_score_distribution import AnomalyScoreDistribution
 from .anomaly_score_threshold import AnomalyScoreThreshold
 from .aupr import AUPR
@@ -139,13 +139,15 @@ def metric_collection_from_dicts(metrics: dict[str, dict[str, Any]], prefix: str
     for name, dict_ in metrics.items():
         class_path = dict_["class_path"]
         kwargs = dict_["init_args"]
+        if isinstance(kwargs, DictConfig):
+            kwargs = omegaconf.OmegaConf.to_container(kwargs, resolve=True)
         cls = _get_class_from_path(class_path)
         metrics_collection[name] = cls(**kwargs)
     return AnomalibMetricCollection(metrics_collection, prefix=prefix)
 
 
 def create_metric_collection(
-    metrics: list[str] | dict[str, dict[str, Any]], prefix: str | None
+        metrics: list[str] | dict[str, dict[str, Any]], prefix: str | None
 ) -> AnomalibMetricCollection:
     """Create a metric collection from a list of metric names or dictionaries.
 

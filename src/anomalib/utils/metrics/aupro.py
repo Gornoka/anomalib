@@ -11,7 +11,7 @@ import torch
 from matplotlib.figure import Figure
 from torch import Tensor
 from torchmetrics import Metric
-from torchmetrics.functional import auc
+from torchmetrics.utilities.compute import auc
 from torchmetrics.functional.classification import binary_roc
 from torchmetrics.utilities.data import dim_zero_cat
 

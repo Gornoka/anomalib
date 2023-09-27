@@ -7,14 +7,18 @@ from __future__ import annotations
 
 from matplotlib.figure import Figure
 from torch import Tensor
-from torchmetrics import ROC
-from torchmetrics.functional import auc
+from torchmetrics.classification import BinaryROC
+from torchmetrics.utilities.compute import auc
 
 from .plotting_utils import plot_figure
 
 
-class AUROC(ROC):
+class AUROC(BinaryROC):
     """Area under the ROC curve."""
+
+    def __init__(self, num_classes=1, **kwargs) -> None:
+        del num_classes
+        super().__init__(**kwargs)
 
     def compute(self) -> Tensor:
         """First compute ROC curve, then compute area under the curve.
@@ -26,7 +30,8 @@ class AUROC(ROC):
         fpr: Tensor
 
         fpr, tpr = self._compute()
-        return auc(fpr, tpr, reorder=True)
+        _auc = auc(fpr, tpr, reorder=True)
+        return _auc
 
     def update(self, preds: Tensor, target: Tensor) -> None:  # type: ignore
         """Update state with new values.

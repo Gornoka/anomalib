@@ -5,17 +5,19 @@
 
 from __future__ import annotations
 
+
 from typing import Any
 
 import numpy as np
 from matplotlib.figure import Figure
 from pytorch_lightning.loggers.wandb import WandbLogger
 from pytorch_lightning.utilities import rank_zero_only
-
+import random
 try:
     import wandb
-except ModuleNotFoundError:
-    print("To use wandb logger install it using `pip install wandb`")
+except ModuleNotFoundError as m_error:
+    # print("To use wandb logger install it using `pip install wandb`")
+    pass
 
 from .base import ImageLoggerBase
 
@@ -72,18 +74,18 @@ class AnomalibWandbLogger(ImageLoggerBase, WandbLogger):
     """
 
     def __init__(
-        self,
-        name: str | None = None,
-        save_dir: str | None = None,
-        offline: bool | None = False,
-        id: str | None = None,  # kept to match wandb init pylint: disable=redefined-builtin
-        anonymous: bool | None = None,
-        version: str | None = None,
-        project: str | None = None,
-        log_model: str | bool = False,
-        experiment=None,
-        prefix: str | None = "",
-        **kwargs,
+            self,
+            name: str | None = None,
+            save_dir: str | None = None,
+            offline: bool | None = False,
+            id: str | None = None,  # kept to match wandb init pylint: disable=redefined-builtin
+            anonymous: bool | None = None,
+            version: str | None = None,
+            project: str | None = None,
+            log_model: str | bool = False,
+            experiment=None,
+            prefix: str | None = "",
+            **kwargs,
     ) -> None:
         super().__init__(
             name=name,
