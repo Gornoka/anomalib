@@ -76,7 +76,7 @@ class MetricsConfigurationCallback(Callback):
             pixel_metric_names = self.pixel_metric_names
 
         if isinstance(pl_module, AnomalyModule):
-            pl_module.image_metrics = create_metric_collection(image_metric_names, "image_")
-            pl_module.pixel_metrics = create_metric_collection(pixel_metric_names, "pixel_")
+            pl_module.image_metrics = create_metric_collection(image_metric_names, "image_metrics.")
+            pl_module.pixel_metrics = create_metric_collection(pixel_metric_names, "pixel_metrics.")
             pl_module.image_metrics.set_threshold(pl_module.image_threshold.value)
             pl_module.pixel_metrics.set_threshold(pl_module.pixel_threshold.value)

@@ -15,7 +15,7 @@ import torch
 from pytorch_lightning.callbacks import Callback
 from pytorch_lightning.utilities.types import EPOCH_OUTPUT, STEP_OUTPUT
 from torch import Tensor, nn
-from torchmetrics import Metric
+from torchmetrics import Metric, MetricCollection
 
 from anomalib.data.utils import boxes_to_anomaly_maps, boxes_to_masks, masks_to_boxes
 from anomalib.post_processing import ThresholdMethod
@@ -25,7 +25,11 @@ from anomalib.utils.metrics import (
     AnomalyScoreThreshold,
     MinMax,
 )
-
+from pytorch_lightning.utilities.imports import (
+    _ONNX_AVAILABLE,
+    _TORCH_GREATER_EQUAL_1_13,
+    _TORCHMETRICS_GREATER_EQUAL_0_9_1,
+)
 logger = logging.getLogger(__name__)
 
 
@@ -224,7 +228,82 @@ class AnomalyModule(pl.LightningModule, ABC):
             self.log_dict(self.image_metrics, prog_bar=False)
         else:
             self.log_dict(self.image_metrics, prog_bar=True)
+    def log_dict(
+        self,
+        dictionary: Mapping[str, _METRIC_COLLECTION],
+        prog_bar: bool = False,
+        logger: Optional[bool] = None,
+        on_step: Optional[bool] = None,
+        on_epoch: Optional[bool] = None,
+        reduce_fx: Union[str, Callable] = "mean",
+        enable_graph: bool = False,
+        sync_dist: bool = False,
+        sync_dist_group: Optional[Any] = None,
+        add_dataloader_idx: bool = True,
+        batch_size: Optional[int] = None,
+        rank_zero_only: bool = False,
+    ) -> None:
+        """Log a dictionary of values at once.
 
+        Example::
+
+            values = {'loss': loss, 'acc': acc, ..., 'metric_n': metric_n}
+            self.log_dict(values)
+
+        Args:
+            dictionary: key value pairs.
+                The values can be a ``float``, ``Tensor``, ``Metric``, a dictionary of the former
+                or a ``MetricCollection``.
+            prog_bar: if ``True`` logs to the progress base.
+            logger: if ``True`` logs to the logger.
+            on_step: if ``True`` logs at this step.
+                ``None`` auto-logs for training_step but not validation/test_step.
+                The default value is determined by the hook.
+                See :ref:`extensions/logging:Automatic Logging` for details.
+            on_epoch: if ``True`` logs epoch accumulated metrics.
+                ``None`` auto-logs for val/test step but not ``training_step``.
+                The default value is determined by the hook.
+                See :ref:`extensions/logging:Automatic Logging` for details.
+            reduce_fx: reduction function over step values for end of epoch. :meth:`torch.mean` by default.
+            enable_graph: if ``True``, will not auto-detach the graph
+            sync_dist: if ``True``, reduces the metric across GPUs/TPUs. Use with care as this may lead to a significant
+                communication overhead.
+            sync_dist_group: the ddp group to sync across.
+            add_dataloader_idx: if ``True``, appends the index of the current dataloader to
+                the name (when using multiple). If ``False``, user needs to give unique names for
+                each dataloader to not mix values.
+            batch_size: Current batch size. This will be directly inferred from the loaded batch,
+                but some data structures might need to explicitly provide it.
+            rank_zero_only: Whether the value will be logged only on rank 0. This will prevent synchronization which
+                would produce a deadlock as not all processes would perform this log call.
+        """
+        if self._fabric is not None:
+            return self._log_dict_through_fabric(dictionary=dictionary, logger=logger)
+
+        kwargs: Dict[str, bool] = {}
+
+        if isinstance(dictionary, MetricCollection):
+            kwargs["keep_base"] = False
+            if _TORCHMETRICS_GREATER_EQUAL_0_9_1 and dictionary._enable_compute_groups:
+                kwargs["copy_state"] = False
+
+        for k, v in dictionary.items(**kwargs):
+            self.log(
+                name=k,
+                value=v,
+                prog_bar=prog_bar,
+                logger=logger,
+                on_step=on_step,
+                on_epoch=on_epoch,
+                reduce_fx=reduce_fx,
+                enable_graph=enable_graph,
+                sync_dist=sync_dist,
+                sync_dist_group=sync_dist_group,
+                add_dataloader_idx=add_dataloader_idx,
+                batch_size=batch_size,
+                rank_zero_only=rank_zero_only,
+                metric_attribute=k
+            )
     def _load_normalization_class(self, state_dict: OrderedDict[str, Tensor]) -> None:
         """Assigns the normalization method to use."""
         if "normalization_metrics.max" in state_dict.keys():
