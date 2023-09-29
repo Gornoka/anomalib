@@ -12,20 +12,20 @@ class PrecisionAtFixedRecall(BinaryPrecisionAtFixedRecall):
             Tensor: Precision at fixed recall.
         """
 
-        precision, recall = super().compute()
-        logging.debug("Precision: %s at fixed recall:%s", precision, recall)
+        precision, threshold = super().compute()
+        logging.debug("Precision: %s Threshold:%s", precision, threshold)
         return precision
 
 
 # this is only necessary because the log connector requires single scalars
-class RecallAtPrecisionAtFixedRecall(BinaryPrecisionAtFixedRecall):
+class ThresholdAtPrecisionAtFixedRecall(BinaryPrecisionAtFixedRecall):
     def compute(self) -> Tensor:
-        """Compuutes the actual recall of the corresponding precision at fixed recall.
+        """Compuutes the actual recall of the corresponding threshold at fixed recall.
 
         Returns:
             Tensor: Precision at fixed recall.
         """
 
-        precision, recall = super().compute()
-        logging.debug("Precision: %s at fixed recall:%s", precision, recall)
-        return recall
+        precision, threshold = super().compute()
+        logging.debug("Precision: %s Threshold:%s", precision, threshold)
+        return threshold
