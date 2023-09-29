@@ -21,7 +21,7 @@ from .collection import AnomalibMetricCollection
 from .min_max import MinMax
 from .optimal_f1 import OptimalF1
 from .pro import PRO
-from .pr_at_rc import PrecisionAtFixedRecall, RecallAtPrecisionAtFixedRecall
+from .pr_at_rc import PrecisionAtFixedRecall, ThresholdAtPrecisionAtFixedRecall
 
 __all__ = [
     "AUROC",
@@ -33,7 +33,7 @@ __all__ = [
     "MinMax",
     "PRO",
     "PrecisionAtFixedRecall",
-    "RecallAtPrecisionAtFixedRecall",
+    "ThresholdAtPrecisionAtFixedRecall",
 ]
 
 
