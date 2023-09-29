@@ -30,6 +30,7 @@ from pytorch_lightning.utilities.imports import (
     _TORCH_GREATER_EQUAL_1_13,
     _TORCHMETRICS_GREATER_EQUAL_0_9_1,
 )
+
 logger = logging.getLogger(__name__)
 
 
@@ -228,6 +229,7 @@ class AnomalyModule(pl.LightningModule, ABC):
             self.log_dict(self.image_metrics, prog_bar=False)
         else:
             self.log_dict(self.image_metrics, prog_bar=True)
+
     def log_dict(
         self,
         dictionary: Mapping[str, _METRIC_COLLECTION],
@@ -302,8 +304,9 @@ class AnomalyModule(pl.LightningModule, ABC):
                 add_dataloader_idx=add_dataloader_idx,
                 batch_size=batch_size,
                 rank_zero_only=rank_zero_only,
-                metric_attribute=k
+                metric_attribute=k,
             )
+
     def _load_normalization_class(self, state_dict: OrderedDict[str, Tensor]) -> None:
         """Assigns the normalization method to use."""
         if "normalization_metrics.max" in state_dict.keys():
